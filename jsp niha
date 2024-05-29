@@ -1,0 +1,184 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@ page import="java.util.List" %>
+<%@ page import="com.pennant.models.Employee" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Employee List</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    th, td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+    }
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+    tr:hover {
+        background-color: #ddd;
+    }
+    body {
+    font-family: Arial, sans-serif;
+}
+ 
+h1, h2 {
+    margin-bottom: 20px;
+}
+ 
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+ 
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+ 
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+ 
+tr:hover {
+    background-color: #ddd;
+}
+ 
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+ 
+input[type="text"], input[type="number"], button {
+    padding: 5px;
+    margin-bottom: 10px;
+}
+ 
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius:3px;
+}
+ 
+button:hover {
+    background-color: #45a049;
+}
+ 
+#editForm, #deleteForm, #saveForm {
+    display: none;
+}
+ 
+#employeeTable tr {
+    cursor: pointer;
+}
+.button-container {
+        text-align: center;
+        margin-top: 20px;
+    
+    }
+    
+</style>
+</head>
+<body>
+<%
+    List<Employee> emp = (List<Employee>) request.getAttribute("elist");
+    Employee employee = (Employee) request.getAttribute("employee");
+    if (employee == null) {
+        employee = new Employee();
+    }
+%>
+<h1 style="text-align:center">Employee List</h1>
+<div class="button-container">
+<h2>Add/Edit Employee</h2>
+<form id="employeeForm" action="save" method="post">
+    <% if (employee.getEmpNo() != null) { %>
+    <input type="hidden" name="empNo" value="<%= employee.getEmpNo() %>">
+    <% } %>
+    <label for="eName">Name:</label>
+    <input type="text" id="eName" name="eName" value="<%= employee.getEName() %>" required>
+    <label for="job">Job:</label>
+    <input type="text" id="job" name="job" value="<%= employee.getJob() %>" required>
+    <label for="deptNo">Department No:</label>
+    <input type="number" id="deptNo" name="deptNo" value="<%= employee.getDeptNo() %>" required><br>
+    <button type="submit">Add</button>
+</form>
+</div>
+ 
+<h2>Employee List</h2>
+<table id="employeeTable">
+    <thead>
+        <tr>
+            <th>Employee No</th>
+            <th>Name</th>
+            <th>Job</th>
+            <th>Department No</th>
+        </tr>
+    </thead>
+    <tbody>
+<%
+    if (emp != null) {
+        for (Employee e : emp) {
+%>
+    <tr onclick="fillForm('<%= e.getEmpNo() %>','<%= e.getEName() %>','<%= e.getJob() %>','<%= e.getDeptNo() %>')">
+        <td><%= e.getEmpNo() %></td>
+        <td><%= e.getEName() %></td>
+        <td><%= e.getJob() %></td>
+        <td><%= e.getDeptNo() %></td>
+    </tr>
+<%
+        }
+    } else {
+%>
+    <tr>
+        <td colspan="4">No employees found</td>
+    </tr>
+<%
+    }
+%>
+    </tbody>
+</table>
+ 
+<div>
+    <form id="editForm" action="edit" method="get" style="display:inline;">
+        <input type="hidden" id="editId" name="id">
+        <button type="submit">Edit</button>
+    </form>
+    
+    <form id="deleteForm" action="delete" method="get" style="display:inline;">
+        <input type="hidden" id="deleteId" name="id">
+        <button type="submit">Delete</button>
+    </form>
+    
+    <form id="saveForm" action="save" method="post" style="display:inline;">
+        <input type="hidden" id="saveEmpNo" name="empNo">
+        <input type="hidden" id="saveEName" name="eName">
+        <input type="hidden" id="saveJob" name="job">
+        <input type="hidden" id="saveDeptNo" name="deptNo">
+        <button type="submit">Save</button>
+    </form>
+</div>
+ 
+<script>
+function fillForm(empNo, eName, job, deptNo) {
+    document.getElementById('eName').value = eName;
+    document.getElementById('job').value = job;
+    document.getElementById('deptNo').value = deptNo;
+    document.getElementById('editId').value = empNo;
+    document.getElementById('deleteId').value = empNo;
+    document.getElementById('saveEmpNo').value = empNo;
+    document.getElementById('saveEName').value = eName;
+    document.getElementById('saveJob').value = job;
+    document.getElementById('saveDeptNo').value = deptNo;
+}
+</script>
+ 
+</body>
+</html>
